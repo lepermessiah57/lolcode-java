@@ -49,12 +49,22 @@
                 </fileset>
             </batchtest>
         </junit>
-        <java classname="com.lolcode.LolCode" failonerror="true">
-            <classpath refid="project.classpath"/>
-            <arg value="test/samples/hello_world.LOL"/>
-            <arg value="test/samples/count10.LOL"/>
-            <arg value="test/samples/open_file.LOL"/>
-        </java>
+        <taskdef resource="net/sf/antcontrib/antlib.xml">
+            <classpath>
+                <pathelement location="lib/ant-contrib-1.0b3.jar"/>
+            </classpath>
+        </taskdef>
+        <for param="file" parallel="false">
+            <path>
+                <fileset dir="test/samples" includes="*.LOL"/>
+            </path>
+            <sequential>
+                <java classname="com.lolcode.LolCode" failonerror="true">
+                    <classpath refid="project.classpath"/>
+                    <arg value="@{file}"/>
+                </java>
+            </sequential>
+        </for>
     </target>
 
     <target name="doc" description="Generate JavaDoc" depends="genparser">

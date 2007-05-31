@@ -5,6 +5,7 @@
     <buildFile url="file://$PROJECT_DIR$/build.xml">
       <additionalClassPath>
         <entry path="file://$PROJECT_DIR$/lib/junit-4.1.jar" />
+        <entry path="file://$PROJECT_DIR$/lib/ant-contrib-1.0b3.jar" />
       </additionalClassPath>
       <antReference projectDefault="true" />
       <customJdkName value="" />
