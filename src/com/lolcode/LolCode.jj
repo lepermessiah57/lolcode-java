@@ -77,7 +77,6 @@ TOKEN :
 | < AWSUM_THX : "AWSUM THX" >
 | < O_NOES : "O NOES" >
 | < OPEN : "OPEN" >
-| < FILE : "FILE" >
 | < QUESTION : "?" >
 | < VISIBLE : "VISIBLE" >
 | < INVISIBLE : "INVISIBLE" >
@@ -138,7 +137,7 @@ void function() :
 {
   <UP> <IDENT> <BANG> <INTEGER> <EOL>
 |  <IZ> expr() <QUESTION> <KTHXBYE> <EOL>
-| <OPEN> <FILE> <QUOTED_STRING>
+| <OPEN> <IDENT> <QUOTED_STRING>
 }
 
 void expr() :
@@ -160,7 +159,7 @@ void trycatch() :
 void write() :
 {}
 {
-  ( <VISIBLE> | <INVISIBLE> ) ( <QUOTED_STRING> | <IDENT> | <FILE> )
+  ( <VISIBLE> | <INVISIBLE> ) ( <QUOTED_STRING> | <IDENT> )
 }
 
 int integer() :
