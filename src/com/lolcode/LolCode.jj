@@ -58,7 +58,6 @@ PARSER_END(LolCode)
 TOKEN : 
 {
   < HAI : "HAI" >
-| < KTHXBYE : "KTHXBYE" >
 | < CAN : "CAN" >
 | < HAS : "HAS" >
 | < A : "A" >
@@ -69,6 +68,8 @@ TOKEN :
 | < IZ : "IZ" >
 | < YR : "YR" >
 | < UP : "UP" >
+| < KTHX : "KTHX" >
+| < KTHXBYE : "KTHXBYE" >
 | < LOOP : "LOOP" >
 | < THAN : "THAN" >
 | < STDIO : "STDIO" >
@@ -78,6 +79,9 @@ TOKEN :
 | < PLZ : "PLZ" >
 | < AWSUM_THX : "AWSUM THX" >
 | < O_NOES : "O NOES" >
+| < O_RLY : "O RLY" >
+| < YA_RLY : "YA RLY" >
+| < NO_WAI : "NO WAI" >
 | < OPEN : "OPEN" >
 | < QUESTION : "?" >
 | < VISIBLE : "VISIBLE" >
@@ -93,6 +97,12 @@ SKIP :
 {
  " " | "\t"
 }
+
+SPECIAL_TOKEN : /* COMMENTS */
+{
+  <SINGLE_LINE_COMMENT: "BTW" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
 
 /****************
  * Grammer Specification
@@ -139,7 +149,8 @@ void function() :
 {}
 {
   <UP> <IDENT> <BANG> <INTEGER> <EOL>
-|  <IZ> expr() <QUESTION> <KTHXBYE> <EOL>
+|  LOOKAHEAD(2147483647) <IZ> expr() <QUESTION> <KTHXBYE> <EOL>
+|  <IZ> expr() <O_RLY> <QUESTION> <EOL> then() ( Else() )? <KTHX> <EOL>
 | <OPEN> <IDENT> <QUOTED_STRING>
 }
 
@@ -147,6 +158,20 @@ void expr() :
 {}
 {
   <IDENT> <BIGGER> <THAN> <INTEGER>
+}
+
+void then() :
+{}
+{
+  <YA_RLY> <EOL>
+  ( statement() )*
+}
+
+void Else() :
+{}
+{
+  <NO_WAI> <EOL>
+  ( statement() )*
 }
 
 void trycatch() :
