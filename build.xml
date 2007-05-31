@@ -28,6 +28,7 @@
         <javac destdir="${classes}" source="1.5">
             <src path="src"/>
             <src path="${dir.generated}"/>
+            <src path="test"/>
         </javac>
     </target>
 
@@ -35,7 +36,7 @@
               as per http://ant.apache.org/faq.html#delegating-classloader-1.6 -->
     <target name="test" depends="compile">
         <mkdir dir="reports"/>
-        <junit printsummary="yes" haltonfailure="yes">
+        <!--junit printsummary="yes" haltonfailure="yes">
             <classpath>
                 <pathelement location="classes"/>
                 <pathelement location="lib/junit4.0/junit-4.0.jar"/>
@@ -48,7 +49,7 @@
                     <include name="**/*Test.java"/>
                 </fileset>
             </batchtest>
-        </junit>
+        </junit-->
         <taskdef resource="net/sf/antcontrib/antlib.xml">
             <classpath>
                 <pathelement location="lib/ant-contrib-1.0b3.jar"/>
@@ -59,7 +60,8 @@
                 <fileset dir="test/samples" includes="*.LOL"/>
             </path>
             <sequential>
-                <java classname="com.lolcode.LolCode" failonerror="true">
+                <echo>Checking @{file}</echo>
+                <java classname="com.lolcode.Parse" failonerror="true">
                     <classpath refid="project.classpath"/>
                     <arg value="@{file}"/>
                 </java>
@@ -75,9 +77,11 @@
                 use="true"
                 windowtitle="LolCode API">
 
-            <fileset dir="build" defaultexcludes="yes">
+            <fileset dir="src" defaultexcludes="yes">
                 <include name="**/*.java"/>
-                <exclude name="**/*Test.java"/>
+            </fileset>
+            <fileset dir="${dir.generated}" defaultexcludes="yes">
+                <include name="**/*.java"/>
             </fileset>
 
             <doctitle><![CDATA[<h1>LOLCODE</h1>]]></doctitle>
