@@ -10,43 +10,11 @@ package com.lolcode;
 
 /**
  * A parser for Adam Lindsay's <a href="http://lolcode.com">LOLCODE</a> programming language
- * 
+ *
  *
  * @author brianegge
  */
 public final class LolCode {
-
-  /**
-    * @param args optional; the name of the files to parse
-    */
-  public static void main(String args[]) throws ParseException {
-    LolCode parser;
-    if (args.length == 0) {
-      parser = new LolCode(System.in);
-      parser.start();
-    } else {
-      try {
-          for (String file : args) {
-            System.out.println("Checking " + file);
-              parser = new LolCode(new java.io.FileInputStream(file));
-              parser.start();
-          }
-
-      } catch (java.io.FileNotFoundException e) {
-        System.err.println("File " + args[0] + " not found.");
-        abort();
-      }
-    }
-  }
-
-  private static void abort() {
-      System.out.println("LolCode:  Usage is one of:");
-      System.out.println("         java LolCode < inputfile");
-      System.out.println("OR");
-      System.out.println("         java LolCode inputfile(s)");
-      System.exit(1);
-      return;
-  }
 }
 
 PARSER_END(LolCode)
@@ -111,24 +79,35 @@ SPECIAL_TOKEN : /* COMMENTS */
 /**
  * Execute the parsed Mars script
  */
-void start() :
-{}
+LolTree start() :
+{
+  LolTree tree = new LolTree(null);
+  Statement s;
+}
 {
   <HAI> <EOL>
-  ( statement() )*
+  (
+    s = statement()
+    { tree.add(s); }
+   )* 
   <KTHXBYE>
+  {
+    return tree;
+  }
 }
 
-void statement() :
-{}
+Statement statement() :
 {
-  <CAN> <HAS> <STDIO> <QUESTION> <EOL>
-| write() <EOL>
-| loop()
-| defineVariable()
-| <GIMMEH> <IDENT> <EOL>
-| function()
-| trycatch()
+  Statement s = null;
+}
+{
+  <CAN> <HAS> <STDIO> <QUESTION> <EOL> { return null; }
+| s = write() <EOL> { return s; }
+| loop() { return null; }
+| defineVariable() { return null; }
+| <GIMMEH> <IDENT> <EOL> { return null; }
+| function() { return null; }
+| trycatch() { return null; }
 }
 
 void loop() :
@@ -184,10 +163,25 @@ void trycatch() :
     statement()
 }
 
-void write() :
-{}
+StatementWrite write() :
 {
-  ( <VISIBLE> | <INVISIBLE> ) ( <QUOTED_STRING> | <IDENT> ) ( <N> ( <QUOTED_STRING> | <IDENT>) )*
+  StatementWrite s = new StatementWrite();
+  Object o;
+}
+{
+  ( <VISIBLE>
+   { s.setVisible(true); }
+  | <INVISIBLE>
+  )
+   ( o = string() | o = <IDENT> )
+    { s.add(o); }
+    ( <N>
+       ( o = string() | o = <IDENT> )
+       { s.add(o); }
+    )*
+  {
+    return s;
+  }
 }
 
 int integer() :
@@ -200,3 +194,15 @@ int integer() :
     return Integer.parseInt(t.image);
   }
 }
+
+String string() :
+{
+ Token t;
+}
+{
+ t = <QUOTED_STRING>
+ {
+   return t.image.substring(1, t.image.length() - 2);
+ }
+}
+ 
