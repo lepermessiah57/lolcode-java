@@ -7,7 +7,7 @@ import java.io.PrintStream;
  *
  * @author brianegge
  */
-public class Run implements Runtime {
+public class Run extends Runtime {
     private final LolTree tree;
     private final Runtime runtime;
 
@@ -57,12 +57,15 @@ public class Run implements Runtime {
         this.runtime = runtime;
     }
 
-    public void run() {
+    public int run() {
         for (Statement statement : tree) {
-            if (statement != null) {
-                statement.execute(runtime);
+            assert statement != null;
+            int stack = statement.execute(runtime);
+            if (stack != 0) {
+                return stack - 1;
             }
         }
+        return 0;
     }
 
     public PrintStream out() {
