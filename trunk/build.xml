@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="LOLCODE" default="all" basedir=".">
 
+    <property file="build.properties"/>
     <property name="dir.generated" value="build/generated"/>
     <property name="dir.classes" value="build/classes"/>
-
 
     <path id="project.classpath">
         <pathelement location="${dir.classes}"/>
     </path>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="lib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
 
     <target name="all" depends="clean, genparser,compile,test,doc, jar" description="Run all steps"/>
 
@@ -50,11 +56,6 @@
                 </fileset>
             </batchtest>
         </junit>
-        <taskdef resource="net/sf/antcontrib/antlib.xml">
-            <classpath>
-                <pathelement location="lib/ant-contrib-1.0b3.jar"/>
-            </classpath>
-        </taskdef>
         <for param="file" parallel="false">
             <path>
                 <fileset dir="test/samples" includes="*.LOL"/>
@@ -90,11 +91,19 @@
         </javadoc>
     </target>
 
-    <!-- make jar file-->
-    <target name="jar" depends="compile">
+    <!-- preparation -->
+    <target name="prepare">
         <mkdir dir="build/dist"/>
-        <copy file="bin/lol.sh" tofile="build/dist/lol"/>
-        <chmod file="build/dist/lol" perm="ugo+rx"/>
+        <propertyregex property="build.revision.numeric"
+                       input="${build.revision}"
+                       regexp="\$Revision: (\d+) \$"
+                       select="\1"/>
+        <property name="build.revision.numeric" value="dummy value to fix Intellij warning"/>
+        <property name="build.number" value="${release.number}.${build.revision.numeric}"/>
+    </target>
+
+    <!-- make jar file-->
+    <target name="jar" depends="prepare, compile">
         <jar destfile="build/dist/LOLCODE.jar">
             <fileset dir="${dir.classes}">
                 <exclude name="**/*Test.class"/>
@@ -105,6 +114,9 @@
                 <attribute name="Created-By" value="Brian Egge, Adam Lindsay"/>
             </manifest>
         </jar>
+        <copy file="bin/lol.sh" tofile="build/dist/lol"/>
+        <chmod file="build/dist/lol" perm="ugo+rx"/>
+        <copy file="build/dist/LOLCODE.jar" tofile="build/dist/LOLCODE-${build.number}.jar"/>
     </target>
 
 </project>
