@@ -12,6 +12,7 @@ public class TestRuntime extends Runtime {
     private final PrintStream out = new PrintStream(bout);
     private final ByteArrayOutputStream berr = new ByteArrayOutputStream();
     private final PrintStream err = new PrintStream(berr);
+//    private InputStreamReader in = new InputStreamReader(new ByteArrayInputStream(new byte[]{}));
 
     public PrintStream out() {
         return out;
@@ -28,4 +29,8 @@ public class TestRuntime extends Runtime {
     public String getStdErr() {
         return berr.toString();
     }
+
+//    public void setStdIn(String s) {
+//        in = new InputStreamReader(new ByteArrayInputStream( ));
+//    }
 }
