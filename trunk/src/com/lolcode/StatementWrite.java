@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author brianegge
  */
-public class StatementWrite extends Statement {
+public class StatementWrite implements Statement {
 
     private List<Object> items = new ArrayList<Object>();
     private boolean visible;
@@ -24,15 +24,23 @@ public class StatementWrite extends Statement {
         items.add(item);
     }
 
-    public void execute(Runtime runtime) {
+    public int execute(Runtime runtime) {
         PrintStream stream = visible ? runtime.out() : runtime.err();
         for (Object item : items) {
-            if (visible) {
-                stream.print(item);
+            Object o;
+            if (item instanceof Token) {
+                Token t = (Token) item;
+                o = runtime.variables.get(t.image);
             } else {
-                stream.print(item);
+                o = item;
+            }
+            if (visible) {
+                stream.print(o);
+            } else {
+                stream.print(o);
             }
         }
         stream.println();
+        return 0;
     }
 }

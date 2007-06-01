@@ -8,6 +8,9 @@ PARSER_BEGIN(LolCode)
 
 package com.lolcode;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * A parser for Adam Lindsay's <a href="http://lolcode.com">LOLCODE</a> programming language
  *
@@ -40,7 +43,6 @@ TOKEN :
 | < KTHXBYE : "KTHXBYE" >
 | < LOOP : "LOOP" >
 | < THAN : "THAN" >
-| < STDIO : "STDIO" >
 | < OUTTA : "OUTTA" >
 | < BIGGER : "BIGGER" >
 | < GIMMEH : "GIMMEH" >
@@ -82,13 +84,13 @@ SPECIAL_TOKEN : /* COMMENTS */
 LolTree start() :
 {
   LolTree tree = new LolTree(null);
-  Statement s;
+  List<Statement> list;
 }
 {
   <HAI> <EOL>
   (
-    s = statement()
-    { tree.add(s); }
+    list = statements()
+    { tree.addAll(list); }
    )* 
   <KTHXBYE>
   {
@@ -98,45 +100,73 @@ LolTree start() :
 
 Statement statement() :
 {
-  Statement s = null;
+  Statement s;
+  Token t;
 }
 {
-  <CAN> <HAS> <STDIO> <QUESTION> <EOL> { return null; }
+  <CAN> <HAS> t=<IDENT> <QUESTION> <EOL> { return new StatementRequire(t); }
 | s = write() <EOL> { return s; }
-| loop() { return null; }
-| defineVariable() { return null; }
+| s = loop() { return s; }
+| s = defineVariable() { return s; }
 | <GIMMEH> <IDENT> <EOL> { return null; }
-| function() { return null; }
+| s = function() { return s; }
 | trycatch() { return null; }
 }
 
-void loop() :
-{}
+List<Statement> statements() :
+{
+    List<Statement> list = new ArrayList<Statement>();
+    Statement s;
+}
+{
+  ( LOOKAHEAD(2) s=statement() { list.add(s); } )+
+  {
+    return list;
+  }
+}
+StatementLoop loop() :
+{
+  List<Statement> list;
+}
 {
   <IM> <IN> <YR> <LOOP> <EOL>
-  ( LOOKAHEAD(2) statement() )+
+  list = statements()
   <IM> <OUTTA> <YR> <LOOP> <EOL>
+  {
+    return new StatementLoop(list);
+  }
 }
 
-void defineVariable() :
-{}
+Statement defineVariable() :
 {
-  <I> <HAS> <A> <IDENT> <EOL>
+ Token t;
+}
+{
+  <I> <HAS> <A> t=<IDENT> <EOL> { return new StatementDeclareVariable(t); }
 }
 
-void function() :
-{}
+Statement function() :
 {
-  <UP> <IDENT> <BANG> <INTEGER> <EOL>
-|  LOOKAHEAD(2147483647) <IZ> expr() <QUESTION> <KTHXBYE> <EOL>
-|  <IZ> expr() <O_RLY> <QUESTION> <EOL> then() ( Else() )? <KTHX> <EOL>
-| <OPEN> <IDENT> <QUOTED_STRING>
+  Token verb;
+  Token variable;
+  Object arg;
+  Expression expr;
+}
+{
+  verb=<UP> variable=<IDENT> <BANG> arg=integer() <EOL> { return new StatementFunction(verb, variable, arg); }
+|  LOOKAHEAD(2147483647) <IZ> expr=expr() <QUESTION> <KTHXBYE> <EOL> { return new StatementIfElse(expr, new StatementBreak()); }
+|  <IZ> expr() <O_RLY> <QUESTION> <EOL> then() ( Else() )? <KTHX> <EOL>  { return null; }
+| <OPEN> <IDENT> <QUOTED_STRING>  { return null; }
 }
 
-void expr() :
-{}
+Expression expr() :
 {
-  <IDENT> <BIGGER> <THAN> <INTEGER>
+  Expression e;
+  Token variable;
+  Object arg;
+}
+{
+  variable=<IDENT> <BIGGER> <THAN> arg=integer() { return new ExpressionBigger(variable, arg); }
 }
 
 void then() :
