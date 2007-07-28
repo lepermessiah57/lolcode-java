@@ -47,7 +47,9 @@
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
-  <component name="DependencyValidationManager" />
+  <component name="DependencyValidationManager">
+    <scope name="src" pattern="(file[LOLCODE]:src//*||file[LOLCODE]:test//*)&amp;&amp;!file[LOLCODE]:src/com/lolcode/parser/JJTLolCodeState.java&amp;&amp;!file[LOLCODE]:src/com/lolcode/parser/SimpleNode.java&amp;&amp;!file[LOLCODE]:src/com/lolcode/parser/Node.java&amp;&amp;!file[LOLCODE]:src/com/lolcode/parser/LolCodeTreeConstants.java" />
+  </component>
   <component name="EclipseCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />

@@ -22,13 +22,11 @@ public class Run extends Runtime {
         Runtime runtime = new Run();
         if (args.length == 0) {
             parser = new LolCode(System.in);
-            parser.CompilationUnit();
             parser.CompilationUnit().interpret(runtime);
         } else {
             try {
                 for (String file : args) {
                     parser = new LolCode(new java.io.FileInputStream(file));
-                    parser.CompilationUnit();
                     parser.CompilationUnit().interpret(runtime);
                 }
 
