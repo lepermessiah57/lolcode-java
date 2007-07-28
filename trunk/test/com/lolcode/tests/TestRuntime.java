@@ -1,12 +1,14 @@
-package com.lolcode;
+package com.lolcode.tests;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 /**
+ * Provides a test runtime, so we can capture the stdout / stderr streams and assert the values.
+ *
  * @author brianegge
  */
-public class TestRuntime extends Runtime {
+public class TestRuntime extends com.lolcode.Runtime {
 
     private final ByteArrayOutputStream bout = new ByteArrayOutputStream();
     private final PrintStream out = new PrintStream(bout);

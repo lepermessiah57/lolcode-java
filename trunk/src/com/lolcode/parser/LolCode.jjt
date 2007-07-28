@@ -1,0 +1,248 @@
+options {
+  JDK_VERSION="1.5";
+  MULTI=true;
+  NODE_PACKAGE="com.lolcode.parser";
+  NODE_EXTENDS="LolNode";
+  STATIC=false;
+}
+
+/**
+ * LOLCODE grammar
+ * A grammar for Adam Lindsay's LOLCODE programming language
+ * http://lolcode.com
+ *
+ */
+PARSER_BEGIN(LolCode)
+
+package com.lolcode.parser;
+
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * A parser for Adam Lindsay's <a href="http://lolcode.com">LOLCODE</a> programming language
+ *
+ *
+ * @author brianegge
+ */
+public final class LolCode {
+
+  /**
+   * Returns the root node of the AST.
+   * It only makes sense to call this after a successful parse.
+   * @return the root node
+   */
+  public ASTCompilationUnit rootNode() {
+    return (ASTCompilationUnit) jjtree.rootNode();
+  }  
+}
+
+PARSER_END(LolCode)
+
+/*********************
+ * Lexer specification
+ *********************/
+
+TOKEN : 
+{
+  < HAI : "HAI" >
+| < CAN : "CAN" >
+| < HAS : "HAS" >
+| < A : "A" >
+| < I : "I" >
+| < N : "N" >
+| < IM : "IM" >
+| < IN : "IN" >
+| < IZ : "IZ" >
+| < YR : "YR" >
+| < UP : "UP" >
+| < KTHX : "KTHX" >
+| < KTHXBYE : "KTHXBYE" >
+| < LOOP : "LOOP" >
+| < THAN : "THAN" >
+| < OUTTA : "OUTTA" >
+| < BIGGER : "BIGGER" >
+| < GIMMEH : "GIMMEH" >
+| < PLZ : "PLZ" >
+| < AWSUM_THX : "AWSUM THX" >
+| < O_NOES : "O NOES" >
+| < O_RLY : "O RLY" >
+| < YA_RLY : "YA RLY" >
+| < NO_WAI : "NO WAI" >
+| < OPEN : "OPEN" >
+| < QUESTION : "?" >
+| < VISIBLE : "VISIBLE" >
+| < INVISIBLE : "INVISIBLE" >
+| < BANG : "!!" >
+| < QUOTED_STRING : "\"" (~["\""])+ "\"" >
+| < INTEGER : ["1"-"9"] (["0"-"9"])* >
+| < IDENT : (["A"-"Z"])+ >
+| < EOL : "\n" | "\r" | "\r\n" >
+}
+
+SKIP :
+{
+ " " | "\t"
+}
+
+SPECIAL_TOKEN : /* COMMENTS */
+{
+  <SINGLE_LINE_COMMENT: "BTW" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
+
+/****************
+ * Grammer Specification
+ ****************/
+
+/**
+ * Top of program
+ */
+ASTCompilationUnit CompilationUnit() :
+{
+}
+{
+  <HAI> <EOL>
+  (
+    Statement()
+  )*
+  <KTHXBYE>
+  <EOF>
+  { return jjtThis; }
+}
+
+void Statement() #void :
+{}
+{
+  Require()
+| Write() <EOL>
+| Loop()
+| DefineVariable()
+| Gimmeh()
+| Function()
+| TryCatch()
+}
+
+void Require() :
+{
+  Token t;
+}
+{
+  <CAN> <HAS> t = <IDENT> <QUESTION> <EOL> { jjtThis.resource = t.image; }
+}
+
+void Gimmeh() #void :
+{}
+{
+  <GIMMEH> <IDENT> <EOL>
+}
+
+void Loop() :
+{}
+{
+  <IM> <IN> <YR> <LOOP> <EOL>
+  ( LOOKAHEAD(2147483647) Statement() )+
+  <IM> <OUTTA> <YR> <LOOP> <EOL>
+}
+
+void DefineVariable() :
+{
+  Token t;
+}
+{
+  <I> <HAS> <A> t=<IDENT> <EOL> { jjtThis.name = t.image; }
+}
+
+void Function() :
+{}
+{
+  IncrFunction()
+|  LOOKAHEAD(2147483647) BreakFunction()
+|  <IZ> BoolExpression() <O_RLY> <QUESTION> <EOL> then() ( Else() )? <KTHX> <EOL>
+| <OPEN> <IDENT> <QUOTED_STRING>
+}
+
+void IncrFunction() :
+{
+  Token ident;
+  int i;
+}
+{
+  <UP> ident=<IDENT> <BANG> i=integer() <EOL> { jjtThis.name = ident.image; jjtThis.value = i; }
+}
+
+void BreakFunction() :
+{}
+{
+  <IZ> BoolExpression() <QUESTION> <KTHXBYE> <EOL>
+}
+
+void BoolExpression() :
+{
+  Token t;
+  int i;
+}                             
+{
+  t = <IDENT> <BIGGER> <THAN> i = integer() { jjtThis.name = t.image; jjtThis.value = i; }
+}
+
+void then() :
+{}
+{
+  <YA_RLY> <EOL>
+  ( Statement() )*
+}
+
+void Else() :
+{}
+{
+  <NO_WAI> <EOL>
+  ( Statement() )*
+}
+
+void TryCatch() :
+{}
+{
+  <PLZ> Statement() <QUESTION> <EOL>
+  <AWSUM_THX> <EOL>
+    Statement()
+  <O_NOES> <EOL>
+    Statement()
+}
+
+void Write() :                 
+{
+  Object o;
+}
+{
+  ( <VISIBLE> { jjtThis.setVisible(true); }
+  | <INVISIBLE>  { jjtThis.setVisible(false); }
+  )
+   ( o=string() |  o=<IDENT> ) { jjtThis.add(o); }
+    ( <N>
+       ( o=string() |  o=<IDENT> ) { jjtThis.add(o); }
+    )*
+}
+
+int integer() #void :
+{
+ Token t;
+}
+{
+  t=<INTEGER>
+  {
+    return Integer.parseInt(t.image);
+  }
+}
+
+String string() #void :
+{
+ Token t;
+}
+{
+ t = <QUOTED_STRING>
+ {
+   return t.image.substring(1, t.image.length() - 1);
+ }
+}
+ 

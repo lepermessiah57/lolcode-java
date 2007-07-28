@@ -1,4 +1,6 @@
-package com.lolcode;
+package com.lolcode.tests;
+
+import com.lolcode.parser.ParseException;
 
 import java.io.FileNotFoundException;
 

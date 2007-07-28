@@ -1,5 +1,7 @@
 package com.lolcode;
 
+import com.lolcode.parser.Token;
+
 /**
  * @author brianegge
  */
