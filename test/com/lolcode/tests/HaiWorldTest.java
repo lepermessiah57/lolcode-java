@@ -1,4 +1,7 @@
-package com.lolcode;
+package com.lolcode.tests;
+
+import com.lolcode.parser.ParseException;
+import junit.framework.Assert;
 
 import java.io.FileNotFoundException;
 
@@ -9,7 +12,7 @@ public class HaiWorldTest extends RuntimeTestCase {
 
     public void testHaiWorld() throws FileNotFoundException, ParseException {
         parse("hello_world.LOL");
-        assertEquals("HAI WORLD" + Runtime.EOL, runtime.getStdOut());
+        Assert.assertEquals("HAI WORLD!" + com.lolcode.Runtime.EOL, runtime.getStdOut());
         assertEquals("", runtime.getStdErr());
     }
 }

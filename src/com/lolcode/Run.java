@@ -1,5 +1,8 @@
 package com.lolcode;
 
+import com.lolcode.parser.LolCode;
+import com.lolcode.parser.ParseException;
+
 import java.io.PrintStream;
 
 /**
@@ -8,24 +11,25 @@ import java.io.PrintStream;
  * @author brianegge
  */
 public class Run extends Runtime {
-    private final LolTree tree;
-    private final Runtime runtime;
 
     /**
      * @param args optional; the name of the files to parse
-     * @throws ParseException If the LOL program fails to parse
+     * @throws com.lolcode.parser.ParseException
+     *          If the LOL program fails to parse
      */
     public static void main(String args[]) throws ParseException {
         LolCode parser;
-        LolTree tree = null;
+        Runtime runtime = new Run();
         if (args.length == 0) {
             parser = new LolCode(System.in);
-            tree = parser.start();
+            parser.CompilationUnit();
+            parser.CompilationUnit().interpret(runtime);
         } else {
             try {
                 for (String file : args) {
                     parser = new LolCode(new java.io.FileInputStream(file));
-                    tree = parser.start();
+                    parser.CompilationUnit();
+                    parser.CompilationUnit().interpret(runtime);
                 }
 
             } catch (java.io.FileNotFoundException e) {
@@ -33,8 +37,6 @@ public class Run extends Runtime {
                 abort();
             }
         }
-        Run run = new Run(tree);
-        run.run();
     }
 
 
@@ -44,28 +46,6 @@ public class Run extends Runtime {
         System.out.println("OR");
         System.out.println("         java Run inputfile(s)");
         System.exit(1);
-    }
-
-
-    public Run(LolTree tree) {
-        this.tree = tree;
-        runtime = this;
-    }
-
-    public Run(LolTree tree, Runtime runtime) {
-        this.tree = tree;
-        this.runtime = runtime;
-    }
-
-    public int run() {
-        for (Statement statement : tree) {
-            assert statement != null;
-            int stack = statement.execute(runtime);
-            if (stack != 0) {
-                return stack - 1;
-            }
-        }
-        return 0;
     }
 
     public PrintStream out() {

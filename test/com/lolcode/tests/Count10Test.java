@@ -1,4 +1,6 @@
-package com.lolcode;
+package com.lolcode.tests;
+
+import com.lolcode.parser.ParseException;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -12,7 +14,7 @@ public class Count10Test extends RuntimeTestCase {
     public void testCount10() throws FileNotFoundException, ParseException {
         parse("Count!!1.LOL");
         List<String> s = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
-        assertEquals(s, Arrays.asList(runtime.getStdOut().split(Runtime.EOL)));
+        assertEquals(s, Arrays.asList(runtime.getStdOut().split(com.lolcode.Runtime.EOL)));
         assertEquals("", runtime.getStdErr());
     }
 }

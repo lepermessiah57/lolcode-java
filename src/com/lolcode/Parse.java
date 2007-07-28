@@ -1,5 +1,8 @@
 package com.lolcode;
 
+import com.lolcode.parser.LolCode;
+import com.lolcode.parser.ParseException;
+
 /**
  * A parser for Adam Lindsay's <a href="http://lolcode.com">LOLCODE</a> programming language
  *
@@ -12,18 +15,19 @@ public final class Parse {
 
     /**
      * @param args optional; the name of the files to parse
-     * @throws ParseException If the LOL program fails to parse
+     * @throws com.lolcode.parser.ParseException
+     *          If the LOL program fails to parse
      */
     public static void main(String args[]) throws ParseException {
         LolCode parser;
         if (args.length == 0) {
             parser = new LolCode(System.in);
-            parser.start();
+            parser.CompilationUnit();
         } else {
             try {
                 for (String file : args) {
                     parser = new LolCode(new java.io.FileInputStream(file));
-                    parser.start();
+                    parser.CompilationUnit();
                 }
 
             } catch (java.io.FileNotFoundException e) {
