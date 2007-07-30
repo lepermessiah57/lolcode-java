@@ -26,7 +26,7 @@
     <target name="genparser">
         <mkdir dir="${dir.generated}/com/lolcode/parser"/>
         <jjtree target="src/com/lolcode/parser/LolCode.jjt" outputdirectory="src/com/lolcode/parser"
-                javacchome="lib/javacc-4.0"/>
+                javacchome="lib"/>
         <javacc target="src/com/lolcode/parser/LolCode.jj" outputdirectory="${dir.generated}/com/lolcode/parser"
                 javacchome="lib" static="false"/>
     </target>
