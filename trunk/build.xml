@@ -20,7 +20,7 @@
     <target name="clean">
         <delete dir="build" quiet="true"/>
         <delete dir="reports" quiet="true"/>
-        <delete dir="docs" quiet="true"/>
+        <delete dir="docs/api" quiet="true"/>
     </target>
 
     <target name="genparser">
