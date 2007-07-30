@@ -106,7 +106,7 @@ ASTCompilationUnit CompilationUnit() :
   (
     Statement()
   )*
-  <KTHXBYE>
+  <KTHXBYE> (<EOL>)*
   <EOF>
   { return jjtThis; }
 }
