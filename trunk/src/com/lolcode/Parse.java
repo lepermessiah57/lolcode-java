@@ -5,6 +5,8 @@ import com.lolcode.parser.ParseException;
 
 /**
  * A parser for Adam Lindsay's <a href="http://lolcode.com">LOLCODE</a> programming language
+ * <p/>
+ * This will parse, but not execute the given LOLCODE.  This can be used to verify the syntax of the program.
  *
  * @author brianegge
  */
