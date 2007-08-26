@@ -4,6 +4,10 @@ package com.lolcode.parser;
 
 import com.lolcode.LolRuntimeException;
 
+/**
+ * LOLCODE has a single global namespace for variables.  When a variable is declared, it's inserted into the
+ * runtime's variable set.  If the variable is already defined, a runtime exception will occur.
+ */
 public class ASTDefineVariable extends SimpleNode {
 
     String name;
