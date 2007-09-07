@@ -21,6 +21,9 @@
         <delete dir="build" quiet="true"/>
         <delete dir="reports" quiet="true"/>
         <delete dir="docs/api" quiet="true"/>
+        <!-- delete some of the generated files -->
+        <delete file="src/com/lolcode/parser/LolCode.jj"/>
+        <delete file="src/com/lolcode/parser/JJTLolCodeState.java"/>
     </target>
 
     <target name="genparser">
