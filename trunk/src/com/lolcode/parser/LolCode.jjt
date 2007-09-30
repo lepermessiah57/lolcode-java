@@ -141,7 +141,7 @@ void Loop() :
 {}
 {
   <IM> <IN> <YR> <LOOP> <EOL>
-  ( LOOKAHEAD(2147483647) Statement() )+
+  ( LOOKAHEAD(Statement()) Statement() )+
   <IM> <OUTTA> <YR> <LOOP> <EOL>
 }
 
@@ -157,7 +157,7 @@ void Function() :
 {}
 {
   IncrFunction()
-|  LOOKAHEAD(2147483647) BreakFunction()
+|  LOOKAHEAD(BreakFunction()) BreakFunction()
 |  <IZ> BoolExpression() <O_RLY> <QUESTION> <EOL> then() ( Else() )? <KTHX> <EOL>
 | <OPEN> <IDENT> <QUOTED_STRING>
 }
